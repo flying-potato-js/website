@@ -169,15 +169,33 @@
         }
 
         .logo {
-            font-size: 4rem;
-            margin-bottom: 0.5rem;
-            display: inline-block;
-            animation: bounce 2s infinite;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1rem;
+            display: block;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .logo::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.1));
+        }
+
+        .logo svg {
+            width: 70%;
+            height: 70%;
+            position: relative;
+            z-index: 1;
         }
 
         h1 {
@@ -686,20 +704,13 @@
         <!-- Header -->
         <header>
             <div class="logo-section">
-                <div class="logo">🥔</div>
+                <div class="logo">
+                    <img src="static/img/logo.png">
+                </div>
                 <h1>Flying Potato</h1>
                 <p class="subtitle">Modern JavaScript Utilities Collection</p>
-                <span class="version-tag">Multi-Version Support</span>
             </div>
         </header>
-
-        <!-- Navigation -->
-        <nav id="version-nav">
-            <button class="nav-btn active" data-version="v1">v1</button>
-            <button class="nav-btn" data-version="v2">v2</button>
-            <button class="nav-btn" data-version="v3">v3</button>
-            <button class="nav-btn" data-version="all">All Versions</button>
-        </nav>
 
         <!-- Main Content -->
         <main id="content">
@@ -776,55 +787,6 @@
     </div>
 
     <script>
-        // Version Navigation
-        const versionBtns = document.querySelectorAll('.nav-btn');
-
-        versionBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Remove active class from all buttons
-                versionBtns.forEach(b => b.classList.remove('active'));
-                // Add active class to clicked button
-                btn.classList.add('active');
-
-                const version = btn.dataset.version;
-                handleVersionChange(version);
-            });
-        });
-
-        function handleVersionChange(version) {
-            // In a real implementation, you would load different content for each version
-            // For now, we'll just update the URLs in the code snippets
-            const codeBlocks = document.querySelectorAll('pre code');
-
-            if (version !== 'all') {
-                codeBlocks.forEach(block => {
-                    if (block.textContent.includes('cdn.jsdelivr.net')) {
-                        const updatedContent = block.innerHTML.replace(
-                            /flying-potato-js\/v\d+/g,
-                            `flying-potato-js/${version}`
-                        );
-                        block.innerHTML = updatedContent;
-                    }
-                });
-
-                // Update version tag
-                const versionTag = document.querySelector('.version-tag');
-                versionTag.textContent = version.toUpperCase();
-            } else {
-                const versionTag = document.querySelector('.version-tag');
-                versionTag.textContent = 'All Versions';
-            }
-
-            // Animate the change
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card, index) => {
-                card.style.animation = 'none';
-                setTimeout(() => {
-                    card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
-                }, 10);
-            });
-        }
-
         // Copy to Clipboard
         function copyCode(button) {
             const codeContainer = button.closest('.code-container');
@@ -886,4 +848,3 @@
     </script>
 </body>
 </html>
-
