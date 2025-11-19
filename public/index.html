@@ -1,1 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flying Potato | JS Utilities</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #13131a;
+            --bg-tertiary: #1a1a24;
+            --accent-1: #6366f1;
+            --accent-2: #8b5cf6;
+            --accent-3: #ec4899;
+            --text-primary: #e5e7eb;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --border: rgba(139, 92, 246, 0.1);
+            --glow: rgba(139, 92, 246, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            top: -200px;
+            left: -200px;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-3));
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, var(--accent-3), var(--accent-1));
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            25% {
+                transform: translate(100px, -100px) scale(1.1);
+            }
+            50% {
+                transform: translate(-50px, 100px) scale(0.9);
+            }
+            75% {
+                transform: translate(-150px, -50px) scale(1.05);
+            }
+        }
+
+        /* Floating Shapes */
+        .shape {
+            position: absolute;
+            opacity: 0.05;
+            animation: rotate 30s infinite linear;
+        }
+
+        .shape-1 {
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--accent-1);
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 80px;
+            height: 80px;
+            border: 2px solid var(--accent-2);
+            top: 60%;
+            right: 15%;
+            border-radius: 50%;
+            animation-delay: -10s;
+        }
+
+        .shape-3 {
+            width: 120px;
+            height: 120px;
+            border: 2px solid var(--accent-3);
+            bottom: 15%;
+            left: 20%;
+            transform: rotate(45deg);
+            animation-delay: -20s;
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg) translateY(0);
+            }
+            50% {
+                transform: rotate(180deg) translateY(-30px);
+            }
+            100% {
+                transform: rotate(360deg) translateY(0);
+            }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 3rem 0;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .logo {
+            font-size: 4rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2), var(--accent-3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: gradientShift 3s ease infinite;
+            background-size: 200% 200%;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .version-tag {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            color: var(--accent-2);
+            font-weight: 500;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .version-tag:hover {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: var(--accent-2);
+            box-shadow: 0 0 20px var(--glow);
+            transform: translateY(-2px);
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0 4rem;
+            flex-wrap: wrap;
+            animation: fadeIn 1s ease-out 0.3s backwards;
+        }
+
+        .nav-btn {
+            padding: 0.75rem 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+            z-index: -1;
+        }
+
+        .nav-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .nav-btn:hover {
+            border-color: var(--accent-2);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            border-color: transparent;
+            box-shadow: 0 0 30px var(--glow);
+        }
+
+        /* Sections */
+        section {
+            margin-bottom: 4rem;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+
+        section:nth-child(2) { animation-delay: 0.2s; }
+        section:nth-child(3) { animation-delay: 0.4s; }
+        section:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent, rgba(139, 92, 246, 0.05));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-2);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px var(--glow);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            position: relative;
+            display: inline-block;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            transition: width 0.4s ease;
+            border-radius: 3px;
+        }
+
+        .card:hover h2::after {
+            width: 100%;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--accent-2);
+        }
+
+        p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.8;
+        }
+
+        /* Code Blocks */
+        .code-container {
+            position: relative;
+            margin: 1.5rem 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .code-container:hover {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-lang {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-1);
+            font-weight: 500;
+        }
+
+        .copy-btn {
+            padding: 0.4rem 1rem;
+            background: rgba(139, 92, 246, 0.1);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--accent-2);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .copy-btn:hover {
+            background: var(--accent-2);
+            color: white;
+            border-color: var(--accent-2);
+        }
+
+        .copy-btn.copied {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        pre {
+            margin: 0;
+            padding: 1.5rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            background: var(--bg-tertiary);
+        }
+
+        code {
+            font-family: 'Fira Code', monospace;
+            color: var(--text-primary);
+        }
+
+        .inline-code {
+            padding: 0.2rem 0.5rem;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 4px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9em;
+            color: var(--accent-2);
+        }
+
+        /* Syntax Highlighting */
+        .keyword { color: #c678dd; }
+        .string { color: #98c379; }
+        .function { color: #61afef; }
+        .comment { color: var(--text-muted); }
+
+        /* Links */
+        a {
+            color: var(--accent-2);
+            text-decoration: none;
+            position: relative;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+            transition: width 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--accent-1);
+        }
+
+        a:hover::after {
+            width: 100%;
+        }
+
+        /* Tip Box */
+        .tip-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-left: 4px solid var(--accent-1);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tip-box::before {
+            content: '💡';
+            font-size: 1.5rem;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .tip-box p {
+            margin-left: 2.5rem;
+            margin-bottom: 0;
+        }
+
+        .tip-title {
+            font-weight: 600;
+            color: var(--accent-1);
+            margin-left: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* List Styling */
+        ol, ul {
+            margin: 1rem 0 1rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        li {
+            margin: 0.5rem 0;
+            line-height: 1.8;
+        }
+
+        /* Grid Layout for Cards */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 0;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            margin-top: 4rem;
+        }
+
+        footer p {
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .card {
+                padding: 1.5rem;
+            }
+
+            .nav-btn {
+                padding: 0.6rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .orb-1, .orb-2, .orb-3 {
+                width: 250px;
+                height: 250px;
+            }
+        }
+
+        /* Scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Selection */
+        ::selection {
+            background: var(--accent-2);
+            color: white;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--accent-1), var(--accent-2));
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--accent-2), var(--accent-3));
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+            color: white;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn-primary:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(139, 92, 246, 0.4);
+        }
+
+        .btn-primary::after {
+            content: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-section">
+                <div class="logo">🥔</div>
+                <h1>Flying Potato</h1>
+                <p class="subtitle">Modern JavaScript Utilities Collection</p>
+                <span class="version-tag">Multi-Version Support</span>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav id="version-nav">
+            <button class="nav-btn active" data-version="v1">v1</button>
+            <button class="nav-btn" data-version="v2">v2</button>
+            <button class="nav-btn" data-version="v3">v3</button>
+            <button class="nav-btn" data-version="all">All Versions</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main id="content">
+            <!-- Welcome Section -->
+            <section id="welcome" class="card">
+                <h2>What is Flying Potato?</h2>
+                <p>Flying Potato is a powerful collection of JavaScript utilities designed to make your development experience smoother and more efficient. Explore our growing library of tools and utilities.</p>
+                <a href="https://flying-potato.pages.dev" target="_blank" rel="noopener noreferrer" class="btn-primary">Explore Documentation</a>
+            </section>
+
+            <!-- Getting Started -->
+            <section id="getting-started" class="card">
+                <h2>Getting Started</h2>
+                <p>Getting started with Flying Potato is incredibly simple. Choose your preferred integration method below:</p>
+
+                <h3>Using JSDelivr CDN</h3>
+
+                <p><strong>Step 1:</strong> Navigate to your HTML or JavaScript file</p>
+                <p><strong>Step 2:</strong> Browse the <span class="inline-code">src</span> directory in the repository</p>
+                <p><strong>Step 3:</strong> Add one of the following snippets:</p>
+
+                <h3>For HTML</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-lang">HTML</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">&lt;script</span> <span class="string">src</span>=<span class="string">"https://cdn.jsdelivr.net/gh/flying-potato-js/v1@main/src/[file_location]"</span><span class="keyword">&gt;&lt;/script&gt;</span></code></pre>
+                </div>
+
+                <h3>For JavaScript</h3>
+                <div class="code-container">
+                    <div class="code-header">
+                        <span class="code-lang">JavaScript</span>
+                        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    </div>
+                    <pre><code><span class="keyword">const</span> <span class="function">utils</span> = <span class="keyword">require</span>(<span class="string">'https://cdn.jsdelivr.net/gh/flying-potato-js/v1@main/src/[file_location]'</span>);</code></pre>
+                </div>
+
+                <div class="tip-box">
+                    <div class="tip-title">PRO TIP</div>
+                    <p>For optimized performance, use the minified version by appending <span class="inline-code">.min.js</span> to your file name (e.g., <span class="inline-code">utils.min.js</span>)</p>
+                </div>
+            </section>
+
+            <!-- Contributing -->
+            <section id="contributing">
+                <div class="grid">
+                    <div class="card">
+                        <h2>🐛 Report Issues</h2>
+                        <p>Found a bug or experiencing issues? Help us improve by reporting problems in our issue tracker.</p>
+                        <a href="https://github.com/flying-potato-js/v1/issues" target="_blank" rel="noopener noreferrer" class="btn-primary">Report Issue</a>
+                    </div>
+
+                    <div class="card">
+                        <h2>💡 Suggest Features</h2>
+                        <p>Have ideas for new features or improvements? Share your thoughts in our discussions forum.</p>
+                        <a href="https://github.com/flying-potato-js/v1/discussions" target="_blank" rel="noopener noreferrer" class="btn-primary">Start Discussion</a>
+                    </div>
+
+                    <div class="card">
+                        <h2>🤝 Pull Requests</h2>
+                        <p>Want to contribute code? Check out our contributing guidelines and submit a pull request.</p>
+                        <a href="https://github.com/flying-potato-js/v1/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer" class="btn-primary">View Guidelines</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2024 Flying Potato. Open source JavaScript utilities.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Version Navigation
+        const versionBtns = document.querySelectorAll('.nav-btn');
+
+        versionBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                versionBtns.forEach(b => b.classList.remove('active'));
+                // Add active class to clicked button
+                btn.classList.add('active');
+
+                const version = btn.dataset.version;
+                handleVersionChange(version);
+            });
+        });
+
+        function handleVersionChange(version) {
+            // In a real implementation, you would load different content for each version
+            // For now, we'll just update the URLs in the code snippets
+            const codeBlocks = document.querySelectorAll('pre code');
+
+            if (version !== 'all') {
+                codeBlocks.forEach(block => {
+                    if (block.textContent.includes('cdn.jsdelivr.net')) {
+                        const updatedContent = block.innerHTML.replace(
+                            /flying-potato-js\/v\d+/g,
+                            `flying-potato-js/${version}`
+                        );
+                        block.innerHTML = updatedContent;
+                    }
+                });
+
+                // Update version tag
+                const versionTag = document.querySelector('.version-tag');
+                versionTag.textContent = version.toUpperCase();
+            } else {
+                const versionTag = document.querySelector('.version-tag');
+                versionTag.textContent = 'All Versions';
+            }
+
+            // Animate the change
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animation = 'none';
+                setTimeout(() => {
+                    card.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
+                }, 10);
+            });
+        }
+
+        // Copy to Clipboard
+        function copyCode(button) {
+            const codeContainer = button.closest('.code-container');
+            const codeBlock = codeContainer.querySelector('code');
+            const textContent = codeBlock.textContent;
+
+            navigator.clipboard.writeText(textContent).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        // Smooth scroll animation on load
+        window.addEventListener('load', () => {
+            document.body.style.opacity = '1';
+        });
+
+        // Add intersection observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all sections
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Parallax effect for orbs on mouse move
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+
+            const orbs = document.querySelectorAll('.orb');
+            orbs.forEach((orb, index) => {
+                const speed = (index + 1) * 20;
+                const x = mouseX * speed;
+                const y = mouseY * speed;
+                orb.style.transform = `translate(${x}px, ${y}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
 
